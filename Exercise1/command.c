@@ -10,9 +10,17 @@
 
 
 	//TODO FUNCTION COMMENT
+/*
+*purpose: check the user's input and parses it
+*input: user's input as a string and a pointer to an address of type Commands_t
+*output: returns true or false
+*/
 bool parse_user_input (const char* input, Commands_t** cmd) {
 	
 	//TODO ERROR CHECK INCOMING PARAMETERS
+	if (!input) {
+		return false;
+	}
 
 	char *string = strdup(input);
 	
@@ -37,9 +45,15 @@ bool parse_user_input (const char* input, Commands_t** cmd) {
 }
 
 	//TODO FUNCTION COMMENT
+/*
+*purpose: deallocating memory for the commands of the program
+*input: a pointer to an address of type Commands_t
+*output: 
+*/
 void destroy_commands(Commands_t** cmd) {
 
 	//TODO ERROR CHECK INCOMING PARAMETERS
+	if (cmd){
 	
 	for (int i = 0; i < (*cmd)->num_cmds; ++i) {
 		free((*cmd)->cmds[i]);
@@ -47,5 +61,6 @@ void destroy_commands(Commands_t** cmd) {
 	free((*cmd)->cmds);
 	free((*cmd));
 	*cmd = NULL;
+}
 }
 
