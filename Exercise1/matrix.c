@@ -55,22 +55,31 @@ bool create_matrix (Matrix_t** new_matrix, const char* name, const unsigned int 
 }
 
 	//TODO FUNCTION COMMENT
-
+/*
+*purpose: destroys a matrix
+*input: takes in a pointer to an address of type Matrix_t
+*output: returns nothing
+*/
 void destroy_matrix (Matrix_t** m) {
 
 	//TODO ERROR CHECK INCOMING PARAMETERS
 	
-	free((*m)->data);
-	free(*m);
-	*m = NULL;
+	if (m && *m){
+		free((*m)->data);
+		free(*m);
+		*m = NULL;
+	}
 }
 
 
 	
 	//TODO FUNCTION COMMENT
+/*
+*purpose: checks if matrices are equal to each other
+*input: takes in two pointers to the addresses of two separate matrices
+*output: returns true or false depending if the 2 matrices match
+*/
 bool equal_matrices (Matrix_t* a, Matrix_t* b) {
-
-	//TODO ERROR CHECK INCOMING PARAMETERS
 	
 	if (!a || !b || !a->data || !b->data) {
 		return false;	
@@ -84,12 +93,17 @@ bool equal_matrices (Matrix_t* a, Matrix_t* b) {
 }
 
 	//TODO FUNCTION COMMENT
+/*
+*purpose: duplicates a matrix into another
+*input: takes in 2 pointers to addresses of the matrix to be duplicated and the matrix it is duplicated into
+*output: true/false
+*/
 bool duplicate_matrix (Matrix_t* src, Matrix_t* dest) {
 
 
 	//TODO ERROR CHECK INCOMING PARAMETERS
 
-	if (!src) {
+	if (!src ||!dest) {
 		return false;
 	}
 	/*
@@ -101,6 +115,11 @@ bool duplicate_matrix (Matrix_t* src, Matrix_t* dest) {
 }
 
 	//TODO FUNCTION COMMENT
+/*
+*purpose: shifts the matrix a certain direction
+*input: pointer to an addres of type Matrix_t, unsigned integer for shifting, and a char for direction to shift
+*output: true/false
+*/
 bool bitwise_shift_matrix (Matrix_t* a, char direction, unsigned int shift) {
 	
 	//TODO ERROR CHECK INCOMING PARAMETERS
@@ -132,6 +151,11 @@ bool bitwise_shift_matrix (Matrix_t* a, char direction, unsigned int shift) {
 }
 
 	//TODO FUNCTION COMMENT
+/*
+*purpose: add matrices together
+*input: pointers to multiple addresses of matrices
+*output: true/false
+*/
 bool add_matrices (Matrix_t* a, Matrix_t* b, Matrix_t* c) {
 
 	//TODO ERROR CHECK INCOMING PARAMETERS
@@ -149,10 +173,18 @@ bool add_matrices (Matrix_t* a, Matrix_t* b, Matrix_t* c) {
 }
 
 	//TODO FUNCTION COMMENT
+/*
+*input: pointer to address of a matrix
+*purpose: to display the matrix to the user
+*output: the matrix
+*/
 void display_matrix (Matrix_t* m) {
 	
 	//TODO ERROR CHECK INCOMING PARAMETERS
-
+	if (!m){
+		perror("couldn't display matrix");
+		return;
+	}
 
 	printf("\nMatrix Contents (%s):\n", m->name);
 	printf("DIM = (%u,%u)\n", m->rows, m->cols);
@@ -167,9 +199,18 @@ void display_matrix (Matrix_t* m) {
 }
 
 	//TODO FUNCTION COMMENT
+/*
+*purpose: read in a matrix
+*input: pointer to a filename and pointer to address of type Matrix_t
+*output:
+*/
 bool read_matrix (const char* matrix_input_filename, Matrix_t** m) {
 	
 	//TODO ERROR CHECK INCOMING PARAMETERS
+	if (!m) {
+		perror("Can't Read Matrix");
+		return false;
+	}
 
 
 	int fd = open(matrix_input_filename,O_RDONLY);
@@ -300,9 +341,18 @@ bool read_matrix (const char* matrix_input_filename, Matrix_t** m) {
 }
 
 	//TODO FUNCTION COMMENT
+/*
+*purpose: write matrix to file
+*input: pointer to file that will be written to and pointer to address of type Matrix_t
+*output: true/false
+*/
 bool write_matrix (const char* matrix_output_filename, Matrix_t* m) {
 	
 	//TODO ERROR CHECK INCOMING PARAMETERS
+	if (!m || !m->name){
+		perror("Error, matrix cannot write");
+		return false;
+	}
 
 	int fd = open (matrix_output_filename, O_CREAT | O_RDWR | O_TRUNC, 0644);
 	/* ERROR HANDLING USING errorno*/
@@ -368,6 +418,11 @@ bool write_matrix (const char* matrix_output_filename, Matrix_t* m) {
 }
 
 	//TODO FUNCTION COMMENT
+/*
+*purpose: generates a random matrix
+*input: pointer to address of type matrix_t, and 2 unsigned integers to determine the start and end range of matrix numbers
+*output: true/false
+*/
 bool random_matrix(Matrix_t* m, unsigned int start_range, unsigned int end_range) {
 	
 	//TODO ERROR CHECK INCOMING PARAMETERS
@@ -383,18 +438,46 @@ bool random_matrix(Matrix_t* m, unsigned int start_range, unsigned int end_range
 /*Protected Functions in C*/
 
 	//TODO FUNCTION COMMENT
+/*
+*purpose: loads a matrix
+*input: pointer to address of matrix and pointer to unsigned integer data
+*output:
+*/
+
 void load_matrix (Matrix_t* m, unsigned int* data) {
 	
 	//TODO ERROR CHECK INCOMING PARAMETERS
-	memcpy(m->data,data,m->rows * m->cols * sizeof(unsigned int));
+	if (m && data)
+	{
+		memcpy(m->data,data,m->rows * m->cols * sizeof(unsigned int));
+	}
+	else{
+		perror("Error");
+	}
 }
 
 	//TODO FUNCTION COMMENT
+/*
+*purpose: adds matrix to an array
+*input: 2 pointers to a current matrix and a new matrix (addresses) and an unsigned int to number of matrixes
+*output: returns matrix added to array
+*/
 unsigned int add_matrix_to_array (Matrix_t** mats, Matrix_t* new_matrix, unsigned int num_mats) {
 	
 	//TODO ERROR CHECK INCOMING PARAMETERS
 	static long int current_position = 0;
 	const long int pos = current_position % num_mats;
+
+	if (!mats){
+		perror("Error Allocating\n");
+		return 0;
+	}
+
+	if (!new_matrix){
+		perror("Error");
+		return 0;
+	}
+
 	if ( mats[pos] ) {
 		destroy_matrix(&mats[pos]);
 	} 
